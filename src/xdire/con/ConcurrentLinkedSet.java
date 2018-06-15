@@ -58,12 +58,20 @@ public class ConcurrentLinkedSet<T> {
 
         try {
 
-            // Lock current Node if it's presented
-            if(curr != null)
-                curr.lock();
+            /*
+                For provide guarantees on correct operation
+                order we should always lock first element
+                which can be affected by deletion first
+                prior to element which happens to be a
+                referral
+             */
 
             // Lock previous Node (always presented)
             pred.lock();
+
+            // Lock current Node if it's presented
+            if(curr != null)
+                curr.lock();
 
             // Pass the validation to determine if
             // both locked nodes are currently valid
@@ -166,9 +174,15 @@ public class ConcurrentLinkedSet<T> {
          */
         try {
 
-            // Lock both elements
-            curr.lock();
+            /*
+                For provide guarantees on correct operation
+                order we should always lock first element
+                which can be affected by deletion first
+                prior to element which happens to be a
+                referral
+             */
             pred.lock();
+            curr.lock();
 
             // Validate that after lock we still have
             // situation we can delete elements
